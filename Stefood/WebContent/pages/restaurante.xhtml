@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/modeloSistema.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<h:form id="frmResListagem">
+			<p:dataTable id="tblRestaurantes" widgetVar="tabelaFabricantes"
+				emptyMessage="Nenhum registro encontrado."
+				value="#{MBRestaurante.itens}" var="item" 
+				filteredValue="#{MBRestaurante.itensFiltrados}"
+				paginator="true" rows="10"
+				style="font-size:12px">
+				<f:facet name="header">
+					Lista de Restaurantes
+				</f:facet>
+				<p:column style="font-size:12px" headerText="Código"
+					sortBy="#{item.codigo}" filterBy="#{item.codigo}">
+					<h:outputText value="#{item.codigo}" />
+				</p:column>
+				<p:column headerText="Descrição" sortBy="#{item.descricao}"
+					filterBy="#{item.descricao}">
+					<h:outputText value="#{item.descricao}" />
+				</p:column>
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash" process="@this"
+						oncomplete="PF('dlgResExcluir').show();">
+						<f:setPropertyActionListener target="#{MBRestaurante.restaurante}" value="#{item}" />
+						</p:commandButton>
+						
+					<p:commandButton icon="ui-icon-pencil" process="@this"
+	
+						oncomplete="PF('dlgResEditar').show();">
+						<f:setPropertyActionListener target="#{MBRestaurante.restaurante}" value="#{item}" ></f:setPropertyActionListener>
+						</p:commandButton>
+						
+				</p:column>
+				<f:facet name="footer">
+					<p:commandButton value="Novo" process="@this"
+						actionListener="#{MBRestaurante.prepararNovo}"
+						oncomplete="PF('dlgResNovo').show();" />
+				</f:facet>
+			</p:dataTable>
+		</h:form>
+
+		<p:dialog widgetVar="dlgResNovo" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Novo Restaurante">
+			<h:form id="frmResNovo">
+				<h:panelGrid id="pnlResNovo" columns="2">
+					<p:outputLabel value="Descrição:  " />
+					<p:inputText size="30" maxlength="50"
+						value="#{MBRestaurante.restaurante.descricao}" />
+				</h:panelGrid>
+				<h:panelGrid colums="2">
+					<p:commandButton value="Gravar" process="@form"
+						actionListener="#{MBRestaurante.novo}"
+						oncomplete="PF('dlgResNovo').hide(); PF('tabelaFabricantes').clearfilters();" update=":msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgResNovo').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgResExcluir" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			style="font-size:12px" header="Excluir restaurante">
+			<h:form id="frmResExcluir">
+				<h:panelGrid id="pnlResExcluir" columns="2">
+					<p:outputLabel value="Código:" />
+					<h:outputText value="#{MBRestaurante.restaurante.codigo}" />
+
+					<h:outputLabel value="Descrição:" />
+
+					<h:outputText value="#{MBRestaurante.restaurante.descricao}" />
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Excluir" process="@form"
+						actionListener="#{MBRestaurante.excluir}"
+						oncomplete="PF('dlgResExcluir').hide(); PF('tabelaFabricantes').clearfilters();" update=":msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF(dlgResExcluir).hide();" />
+
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgResEditar" closable="false" draggble="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Editar Restaurante">
+			<h:form id="frmResEditar">
+				<h:panelGrid id="pnlResEditar" columns="2">
+					<p:outputLabel value="Código" />
+					<h:outputText value="#{MBRestaurante.restaurante.codigo}" />
+
+					<p:outputLabel value="Descrição:" />
+					<p:inputText value="#{MBRestaurante.restaurante.descricao}"
+						size="30" maxlenght="50" />
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar"
+						actionListener="#{MBRestaurante.editar}" process="@form"
+						oncomplete="PF('dlgResEditar').hide();" update=":msgGlobal" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlg.Res.Editar').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+
+	</ui:define>
+</ui:composition>
